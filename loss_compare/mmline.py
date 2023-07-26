@@ -10,7 +10,7 @@ from diffusers.utils import  logging
 from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
 from diffusers.pipelines.stable_diffusion import StableDiffusionPipeline
 
-from utils.loss_utils import loss1, loss2, loss3
+from utils.obj_loss import loss1, loss2, loss3, loss4
 
 from utils.ptp_utils import AttentionStore,aggregate_attention,view_L_images,text_under_L_image, text_under_image, view_images, view_L_images
 
@@ -126,7 +126,7 @@ class MyPipeline(StableDiffusionPipeline):
                 obj_token2 = int(tokens[indices[1]])
                 print(f"compute loss between {self.tokenizer.decode(obj_token1)} and {self.tokenizer.decode(obj_token2)}.")
 
-                loss = loss3(attention_maps_tokens[indices[0]],attention_maps_tokens[indices[1]])
+                loss = loss4(attention_maps_tokens[indices[0]],attention_maps_tokens[indices[1]])
 
 
                 losses += loss

@@ -70,3 +70,38 @@ def loss3(map_a, map_b) -> torch.Tensor:
 
 
     return loss
+
+
+def loss4(map_a, map_b) -> torch.Tensor:
+
+    scale_factor = 100
+
+    map_a *= scale_factor
+    map_b *= scale_factor
+
+    map_a = F.softmax(map_a, dim=-1)
+    map_b = F.softmax(map_b, dim=-1)
+
+    avg_attn_a = torch.mean(map_a)
+    avg_attn_b = torch.mean(map_b)
+    # print(avg_attn_a)
+    # # # 构建 矩阵，值为 1
+    print(f"map_a mean:{torch.mean(map_a)}, map_a max: {torch.max(map_a)}")
+
+    a_one = torch.where(map_a > avg_attn_a, 1, 0)
+    b_one = torch.where(map_b > avg_attn_b, 1, 0)
+
+
+    # 并集，交集, 如果（i,j）像素位置有重叠，就为 1
+    intersection = a_one * b_one
+
+    map_a_intersection = torch.mul(map_a, intersection)
+    map_a_all = torch.mul(map_a, a_one)
+    loss_a = torch.div(map_a_intersection.sum(), map_a_all.sum())
+
+    map_b_intersection = torch.mul(map_b, intersection)
+    map_b_all = torch.mul(map_b, b_one)
+    loss_b = torch.div(map_b_intersection.sum(), map_b_all.sum())
+
+    loss = loss_a + loss_b 
+    return loss
